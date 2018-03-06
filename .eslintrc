@@ -1,0 +1,7 @@
+{
+  "extends": "C:\\Users\\Nick\\.eslintrc",
+  "env": {
+    "browser": true,
+    "node": true
+  }
+}
