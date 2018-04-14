@@ -1,7 +1,5 @@
 import EventEmitter from 'events';
-import warning from 'warning';
-import { v4 } from 'uuid';
-import actionHasMeta from './util/actionHasMeta';
+import invariant from 'invariant';
 
 export default class EngineConnector extends EventEmitter {
   actions;
@@ -14,37 +12,37 @@ export default class EngineConnector extends EventEmitter {
   }
 
   dispatch(action) {
-    if (actionHasMeta(action)) {
-      action.meta.id = v4();
-    } else {
-      action.meta = { id: v4() };
-    }
+    invariant(
+      typeof action === 'object',
+      'Actions being dispatched to the engine MUST be an object: %s',
+      action,
+    );
+
+    const meta = action.meta || {};
 
     return new Promise((resolve, reject) => {
-      this.actions[action.meta.id] = {
-        dispatchedAction: action,
-        reject,
-        resolve,
-      };
-
-      window.engine_dispatch(action);
+      window.engineQuery({
+        ...meta,
+        onFailure: (code, message) => reject({ code, message }),
+        onSuccess: resolve,
+        request: JSON.stringify(action),
+      });
     });
   }
 
   setupSubscriber() {
-    window.engine_subscribe(action => {
-      const actionHandler = this.actions[action.meta.id];
-      if (actionHandler) {
-        actionHandler.done = true;
-
-        if (action.error === true) {
-          return actionHandler.reject(action);
-        }
-
-        return actionHandler.resolve(action);
-      }
-
-      return this.emit('action', action);
-    });
+    // TODO: this needs to change when we have subscription functionality
+    //
+    // window.engine_subscribe(action => {
+    //   const actionHandler = this.actions[action.meta.id];
+    //   if (actionHandler) {
+    //     actionHandler.done = true;
+    //     if (action.error === true) {
+    //       return actionHandler.reject(action);
+    //     }
+    //     return actionHandler.resolve(action);
+    //   }
+    //   return this.emit('action', action);
+    // });
   }
 }

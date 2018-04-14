@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import logo from './logo.svg';
 import './App.css';
+import DevToolsDetector from './DevToolsDetector';
 
 const engineAction = action => {
   if (typeof action === 'object' && typeof action.meta === 'object') {
@@ -14,27 +15,22 @@ const engineAction = action => {
 };
 
 class App extends Component {
-  static x;
-
   state = {
-    isLoading: false,
+    devToolsOpen: false,
   };
 
-  handleEngineAction = () => {
-    this.setState({ isLoading: true });
-
-    this.props
-      .engineAction()
-      .then(action => {
-        console.log('Engine came back:', action);
-      })
-      .catch(action => {
-        console.log('Engine threw an error on this action:', action);
-      })
-      .then(() => {
-        this.setState({ isLoading: false });
-      });
+  handleEngineAction = async () => {
+    try {
+      const response = await this.props.engineAction();
+      console.log('Engine came back with:', response);
+    } catch (error) {
+      console.error('Engine threw an error on this action:', error);
+    }
   };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextState.devToolsOpen !== this.state.devToolsOpen;
+  }
 
   render() {
     return (
@@ -46,11 +42,34 @@ class App extends Component {
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
-        <div>
+        <p>
           <button onClick={this.props.decrement}>Decrement</button>
           <button onClick={this.props.increment}>Increment</button>
           <button onClick={this.handleEngineAction}>Engine Action</button>
-        </div>
+        </p>
+
+        <DevToolsDetector
+          error={() => (
+            <div>
+              Error. Make sure you are running this in the Editor window <br />
+            </div>
+          )}
+          render={(open, url) => {
+            if (open) return null;
+
+            return (
+              <p>
+                <button
+                  onClick={() => {
+                    window.open(url);
+                  }}
+                >
+                  Open DevTools
+                </button>
+              </p>
+            );
+          }}
+        />
 
         {this.state.isLoading && <div>Loading...</div>}
       </div>

@@ -1,5 +1,5 @@
 {
-  "extends": "C:\\Users\\Nick\\.eslintrc",
+  "extends": "C:\\Users\\Nicholas\\.eslintrc",
   "env": {
     "browser": true,
     "node": true
