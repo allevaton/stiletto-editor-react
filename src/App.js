@@ -15,10 +15,6 @@ const engineAction = action => {
 };
 
 class App extends Component {
-  state = {
-    devToolsOpen: false,
-  };
-
   handleEngineAction = async () => {
     try {
       const response = await this.props.engineAction();
@@ -70,8 +66,6 @@ class App extends Component {
             );
           }}
         />
-
-        {this.state.isLoading && <div>Loading...</div>}
       </div>
     );
   }

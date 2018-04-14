@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
 /**
@@ -15,7 +15,7 @@ function detectDevTools() {
   return devtools.opened;
 }
 
-class DevToolsDetector extends Component {
+class DevToolsDetector extends PureComponent {
   static propTypes = {
     error: PropTypes.func,
     render: PropTypes.func.isRequired,
