@@ -11,6 +11,7 @@ export default class EngineConnector extends EventEmitter {
     this.actions = {};
   }
 
+  // eslint-disable-next-line class-methods-use-this
   dispatch(action) {
     invariant(
       typeof action === 'object',
