@@ -71,11 +71,7 @@ class DevToolsDetector extends PureComponent {
   render() {
     const { devToolsOpen, devToolsUrl, error } = this.state;
 
-    if (error) {
-      return this.props.error(error);
-    }
-
-    return this.props.render(devToolsOpen, devToolsUrl);
+    return this.props.render(error, devToolsOpen, devToolsUrl);
   }
 }
 
