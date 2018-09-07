@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+
+import configureStore from './store/configureStore';
+import App from './components/App/App';
+import EngineConnector from './engine/EngineConnector';
 
 import './index.css';
-import configureStore from './store/configureStore';
-import EngineConnector from './EngineConnector';
 
 const engineConnector = new EngineConnector();
 
@@ -18,4 +18,3 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root'),
 );
-registerServiceWorker();

@@ -1,10 +1,6 @@
 import React from 'react';
 import Toolbar from './Toolbar';
 
-const Header = () => (
-  <div>
-    <Toolbar />
-  </div>
-);
+const Header = () => <Toolbar />;
 
 export default Header;
