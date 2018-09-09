@@ -1,7 +1,7 @@
 import { applyMiddleware, compose, createStore } from 'redux';
-import { middleware as reduxPackMiddleware } from 'redux-pack';
 import createReducers from './createReducers';
 import engineMiddleware from './engineMiddleware';
+import createSagaMiddleware from 'redux-saga';
 
 const composeEnhancers =
   typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -10,14 +10,16 @@ const composeEnhancers =
       })
     : compose;
 
-export default function configureStore(initialState = {}, engineConnector) {
+export default function configureStore(initialState = {}) {
+  const sagaMiddleware = createSagaMiddleware();
+
   const store = createStore(
     createReducers,
     initialState,
-    composeEnhancers(
-      applyMiddleware(reduxPackMiddleware, engineMiddleware(engineConnector)),
-    ),
+    composeEnhancers(applyMiddleware(sagaMiddleware)),
   );
+
+  store.runSaga = sagaMiddleware.run;
 
   return store;
 }

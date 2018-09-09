@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Typography } from 'material-ui';
+import { Button, Typography } from '@material-ui/core';
 import DevToolsDetector from '../DevTools/DevToolsDetector';
 
 const DevToolsButton = () => (

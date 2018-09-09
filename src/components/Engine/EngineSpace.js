@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui';
+import { withStyles, Button } from '@material-ui/core';
+import { connect } from 'react-redux';
 
 const styles = theme => ({
   content: {
@@ -27,13 +28,17 @@ class EngineSpace extends Component {
     this.engineSpace = React.createRef();
   }
 
-  componentDidMount() {
+  handleViewportChange = () => {
+    const { onViewportChange } = this.props;
     const element = this.engineSpace.current;
-    console.log('x', element.offsetLeft);
-    console.log('y', element.offsetTop);
-    console.log('height', element.offsetHeight);
-    console.log('width', element.offsetWidth);
-  }
+
+    onViewportChange(
+      element.offsetLeft,
+      element.offsetTop,
+      element.offsetHeight,
+      element.offsetWidth,
+    );
+  };
 
   getSnapshotBeforeUpdate(prevProps, prevState) {}
 
@@ -43,10 +48,31 @@ class EngineSpace extends Component {
     return (
       <main className={classes.content} {...props}>
         <div className={classes.toolbar} />
-        <div className={classes.engine} ref={this.engineSpace} />
+        <div className={classes.engine} ref={this.engineSpace}>
+          <Button onClick={this.handleViewportChange}>Dispatch Viewport</Button>
+        </div>
       </main>
     );
   }
 }
 
-export default withStyles(styles)(EngineSpace);
+const mapDispatchToProps = dispatch => ({
+  onViewportChange: (x, y, width, height) =>
+    dispatch({
+      type: 'VIEWPORT_CHANGE',
+      meta: {
+        engineAction: true,
+      },
+      payload: {
+        x,
+        y,
+        height,
+        width,
+      },
+    }),
+});
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(withStyles(styles)(EngineSpace));

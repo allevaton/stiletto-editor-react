@@ -1,8 +1,6 @@
-import React from 'react';
+import { withStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
-
-import { withStyles } from 'material-ui';
-
+import React from 'react';
 import EngineSpace from '../Engine/EngineSpace';
 import Header from '../Header/Header';
 

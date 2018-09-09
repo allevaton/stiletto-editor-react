@@ -5,7 +5,7 @@ import {
   Toolbar as MUIToolbar,
   Typography,
   withStyles,
-} from 'material-ui';
+} from '@material-ui/core';
 import DevToolsButton from './DevToolsButton';
 
 const styles = theme => ({
