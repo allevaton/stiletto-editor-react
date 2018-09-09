@@ -22,7 +22,7 @@ function* engineDispatch(action) {
 }
 
 function* engineCallback(rawResponse) {
-  const response = JSON.parse(response);
+  const response = JSON.parse(rawResponse);
   const { id, origin, payload, type } = response;
 
   console.log('Got a response', response);
@@ -54,7 +54,7 @@ export default function* engineSagaManager() {
   window.engineQuery({
     request: 'subscribe',
     persistent: true,
-    onSuccess: engineCallback,
+    onSuccess: response => engineCallback(response).next(),
     onFailure: function(error_code, error_message) {},
   });
 

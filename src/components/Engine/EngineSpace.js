@@ -43,7 +43,7 @@ class EngineSpace extends Component {
   getSnapshotBeforeUpdate(prevProps, prevState) {}
 
   render() {
-    const { classes, ...props } = this.props;
+    const { classes, onViewportChange, ...props } = this.props;
 
     return (
       <main className={classes.content} {...props}>
@@ -63,6 +63,7 @@ const mapDispatchToProps = dispatch => ({
       meta: {
         engineAction: true,
       },
+      origin: 'editor',
       payload: {
         x,
         y,
