@@ -14,7 +14,7 @@ function* engineDispatch(action) {
     request: JSON.stringify(action),
     persistent: false,
     // Not real response, simply engine-verification
-    onSuccess: id => (engineActions[id] = action),
+    onSuccess: id => id && (engineActions[id] = action),
     onFailure: (code, errorMessage) => {
       throw new Error(errorMessage);
     },
@@ -41,6 +41,7 @@ function* engineCallback(rawResponse) {
     }
   } else {
     // Engine expects a response here
+    // If no ID present, don't send anything back
   }
 }
 
