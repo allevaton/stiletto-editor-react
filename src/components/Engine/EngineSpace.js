@@ -1,7 +1,9 @@
+import { Button, withStyles, Typography } from '@material-ui/core';
+import debounce from 'lodash/debounce';
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles, Button } from '@material-ui/core';
+import EventListener from 'react-event-listener';
 import { connect } from 'react-redux';
+import { isEngineDead } from '../../engine/redux';
 
 const styles = theme => ({
   content: {
@@ -15,15 +17,39 @@ const styles = theme => ({
     width: 240,
   },
   engine: {
+    backgroundColor: theme.palette.grey.A400,
     height: '100%',
     margin: -24,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   toolbar: theme.mixins.toolbar,
 });
 
+@connect(
+  state => ({ isDead: isEngineDead(state) }),
+  {
+    onViewportChange: (x, y, height, width) => ({
+      type: 'VIEWPORT_CHANGE',
+      meta: {
+        engineAction: true,
+      },
+      origin: 'editor',
+      payload: {
+        x,
+        y,
+        height,
+        width,
+      },
+    }),
+  },
+)
 class EngineSpace extends Component {
   constructor(props) {
     super(props);
+
+    this.debouncedViewportChange = debounce(this.handleViewportChange, 300);
 
     this.engineSpace = React.createRef();
   }
@@ -40,40 +66,33 @@ class EngineSpace extends Component {
     );
   };
 
-  getSnapshotBeforeUpdate(prevProps, prevState) {}
+  componentDidMount() {
+    this.handleViewportChange();
+  }
 
   render() {
-    const { classes, onViewportChange, ...props } = this.props;
+    const { classes, isDead, onViewportChange, ...props } = this.props;
 
     return (
       <main className={classes.content} {...props}>
+        <EventListener
+          target="window"
+          onResize={this.debouncedViewportChange}
+        />
+
+        {/* Adds spacing to account for the toolbar */}
         <div className={classes.toolbar} />
+
         <div className={classes.engine} ref={this.engineSpace}>
-          <Button onClick={this.handleViewportChange}>Dispatch Viewport</Button>
+          {isDead && (
+            <Typography color="error" variant="display1">
+              Engine not connected
+            </Typography>
+          )}
         </div>
       </main>
     );
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  onViewportChange: (x, y, width, height) =>
-    dispatch({
-      type: 'VIEWPORT_CHANGE',
-      meta: {
-        engineAction: true,
-      },
-      origin: 'editor',
-      payload: {
-        x,
-        y,
-        height,
-        width,
-      },
-    }),
-});
-
-export default connect(
-  null,
-  mapDispatchToProps,
-)(withStyles(styles)(EngineSpace));
+export default withStyles(styles)(EngineSpace);

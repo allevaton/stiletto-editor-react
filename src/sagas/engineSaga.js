@@ -1,5 +1,4 @@
-import { takeEvery, actionChannel } from 'redux-saga/effects';
-import uuid from 'uuid';
+import { takeEvery } from 'redux-saga/effects';
 
 const engineActions = {};
 

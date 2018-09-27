@@ -1,5 +1,5 @@
-import React from 'react';
 import { Button, Typography } from '@material-ui/core';
+import React from 'react';
 import DevToolsDetector from '../DevTools/DevToolsDetector';
 
 const DevToolsButton = () => (
@@ -8,15 +8,16 @@ const DevToolsButton = () => (
       if (err) {
         if (/JSON/.test(err.message)) {
           return (
-            <Typography>
+            <Typography color="inherit">
               Error connecting to DevTools. Is another application using port
               8000?
             </Typography>
           );
         }
+
         return (
-          <Typography>
-            Error. Make sure you are running this in the Editor window
+          <Typography color="inherit">
+            Error. Make sure you are running this in the Editor window.
           </Typography>
         );
       }
