@@ -1,4 +1,8 @@
-import { takeEvery } from 'redux-saga/effects';
+import { delay, channel } from 'redux-saga';
+import {
+  call, put, takeEvery, getContext,
+} from 'redux-saga/effects';
+import { engineConnected, engineConnectFailed } from '../engine/redux';
 
 const engineActions = {};
 
@@ -7,8 +11,7 @@ const origins = {
   engine: 'engine',
 };
 
-function* engineDispatch(action) {
-  console.log('Sending action', action);
+function engineDispatch(action) {
   window.engineQuery({
     request: JSON.stringify(action),
     persistent: false,
@@ -22,15 +25,22 @@ function* engineDispatch(action) {
 
 function* engineCallback(rawResponse) {
   const response = JSON.parse(rawResponse);
-  const { id, origin, payload, type } = response;
-
-  console.log('Got a response', response);
+  const { id, origin } = response;
 
   if (origin === origins.editor) {
-    if (engineActions[id]) {
+    const action = engineActions[id];
+
+    if (action) {
       // Engine GAVE a response here
 
-      console.log('Found the response in our table', id);
+      // Merge some data in with the response data so it's interpretable
+      // via reducers
+      yield put({
+        ...response,
+        origin,
+        originalPayload: action.payload,
+        type: action.type,
+      });
 
       // Later, remove the ID
       delete engineActions[id];
@@ -45,21 +55,33 @@ function* engineCallback(rawResponse) {
 }
 
 function* ensureEngineConnection() {
-  return;
+  while (true) {
+    if (window.engineQuery) {
+      return;
+    }
+
+    yield put(engineConnectFailed());
+    yield call(delay, 60000);
+  }
 }
 
 export default function* engineSagaManager() {
   yield ensureEngineConnection();
 
+  const engineResponseChannel = channel();
+
   window.engineQuery({
     request: 'subscribe',
     persistent: true,
-    onSuccess: response => engineCallback(response).next(),
-    onFailure: function(error_code, error_message) {},
+    onSuccess(response) {
+      engineResponseChannel.put(response);
+      // engineCallback(response).next();
+    },
+    onFailure(error_code, error_message) {},
   });
 
-  yield takeEvery(
-    action => action.meta && action.meta.engineAction,
-    engineDispatch,
-  );
+  yield put(engineConnected());
+
+  yield takeEvery(engineResponseChannel, engineCallback);
+  yield takeEvery(action => action.meta && action.meta.engineAction, engineDispatch);
 }

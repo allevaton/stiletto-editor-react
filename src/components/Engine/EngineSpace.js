@@ -1,13 +1,14 @@
-import { Button, withStyles, Typography } from '@material-ui/core';
+import { Typography, withStyles } from '@material-ui/core';
 import debounce from 'lodash/debounce';
 import React, { Component } from 'react';
-import EventListener from 'react-event-listener';
 import { connect } from 'react-redux';
+import ResizeObserver from 'react-resize-observer';
 import { isEngineDead } from '../../engine/redux';
+import engineAction from '../../util/engineAction';
 
 const styles = theme => ({
   content: {
-    backgroundColor: theme.palette.background.default,
+    background: 'transparent',
     flexGrow: 1,
     minWidth: 0, // So the Typography noWrap works
     padding: theme.spacing.unit * 3,
@@ -16,7 +17,7 @@ const styles = theme => ({
     position: 'relative',
     width: 240,
   },
-  engine: {
+  deadEngine: {
     backgroundColor: theme.palette.grey.A400,
     height: '100%',
     margin: -24,
@@ -24,27 +25,12 @@ const styles = theme => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  engine: {
+    background: 'transparent',
+  },
   toolbar: theme.mixins.toolbar,
 });
 
-@connect(
-  state => ({ isDead: isEngineDead(state) }),
-  {
-    onViewportChange: (x, y, height, width) => ({
-      type: 'VIEWPORT_CHANGE',
-      meta: {
-        engineAction: true,
-      },
-      origin: 'editor',
-      payload: {
-        x,
-        y,
-        height,
-        width,
-      },
-    }),
-  },
-)
 class EngineSpace extends Component {
   constructor(props) {
     super(props);
@@ -66,33 +52,46 @@ class EngineSpace extends Component {
     );
   };
 
-  componentDidMount() {
-    this.handleViewportChange();
-  }
-
   render() {
-    const { classes, isDead, onViewportChange, ...props } = this.props;
+    const {
+      classes, isDead, onViewportChange, ...props
+    } = this.props;
 
     return (
       <main className={classes.content} {...props}>
-        <EventListener
-          target="window"
+        <ResizeObserver
           onResize={this.debouncedViewportChange}
+          onReflow={this.debouncedViewportChange}
         />
 
         {/* Adds spacing to account for the toolbar */}
         <div className={classes.toolbar} />
 
-        <div className={classes.engine} ref={this.engineSpace}>
-          {isDead && (
+        {isDead ? (
+          <div className={classes.deadEngine} ref={this.engineSpace}>
             <Typography color="error" variant="display1">
-              Engine not connected
+              {'Engine not connected'}
             </Typography>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className={classes.engine} ref={this.engineSpace} />
+        )}
       </main>
     );
   }
 }
 
-export default withStyles(styles)(EngineSpace);
+export default connect(
+  state => ({ isDead: isEngineDead(state) }),
+  {
+    onViewportChange: (x, y, height, width) => engineAction({
+      type: 'VIEWPORT_CHANGE',
+      payload: {
+        x,
+        y,
+        height,
+        width,
+      },
+    }),
+  },
+)(withStyles(styles)(EngineSpace));

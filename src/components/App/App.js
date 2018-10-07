@@ -1,6 +1,7 @@
 import { withStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import React from 'react';
+import ReduxDevTools from '../DevTools/ReduxDevTools';
 import EngineSpace from '../Engine/EngineSpace';
 import Header from '../Header/Header';
 
@@ -20,6 +21,8 @@ const App = ({ classes }) => (
     <Header />
 
     <EngineSpace />
+
+    {process.env.NODE_ENV !== 'production' && <ReduxDevTools />}
   </div>
 );
 

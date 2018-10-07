@@ -9,15 +9,14 @@ const DevToolsButton = () => (
         if (/JSON/.test(err.message)) {
           return (
             <Typography color="inherit">
-              Error connecting to DevTools. Is another application using port
-              8000?
+              {'Error connecting to DevTools. Is another application using port 8000?'}
             </Typography>
           );
         }
 
         return (
           <Typography color="inherit">
-            Error. Make sure you are running this in the Editor window.
+            {'Error. Make sure you are running this in the Editor window.'}
           </Typography>
         );
       }
@@ -31,7 +30,7 @@ const DevToolsButton = () => (
             window.open(url);
           }}
         >
-          Open DevTools
+          {'Open DevTools'}
         </Button>
       );
     }}

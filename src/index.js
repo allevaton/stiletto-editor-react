@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import App from './components/App/App';
-import EngineConnector from './engine/EngineConnector';
 import './index.css';
 import rootSaga from './sagas/rootSaga';
 import configureStore from './store/configureStore';

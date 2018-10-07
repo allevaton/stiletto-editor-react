@@ -1,9 +1,11 @@
 export default function engineAction(action) {
   if (typeof action === 'object' && typeof action.meta === 'object') {
-    action.meta._engineAction = true;
+    action.meta.engineAction = true;
   } else {
-    action.meta = { _engineAction: true };
+    action.meta = { engineAction: true };
   }
+
+  action.origin = 'editor';
 
   return action;
 }
