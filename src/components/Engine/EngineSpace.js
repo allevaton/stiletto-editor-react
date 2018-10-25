@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import ResizeObserver from 'react-resize-observer';
 import { isEngineDead } from '../../engine/redux';
 import engineAction from '../../util/engineAction';
+import TestElements from './TestElements';
 
 const styles = theme => ({
   content: {
@@ -70,11 +71,14 @@ class EngineSpace extends Component {
         {isDead ? (
           <div className={classes.deadEngine} ref={this.engineSpace}>
             <Typography color="error" variant="display1">
+              <TestElements />
               {'Engine not connected'}
             </Typography>
           </div>
         ) : (
-          <div className={classes.engine} ref={this.engineSpace} />
+          <div className={classes.engine} ref={this.engineSpace}>
+            <TestElements />
+          </div>
         )}
       </main>
     );
