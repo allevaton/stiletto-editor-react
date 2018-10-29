@@ -1,5 +1,5 @@
-import { channel } from 'redux-saga';
-import { call, delay, put, takeEvery } from 'redux-saga/effects';
+import { channel, delay } from 'redux-saga';
+import { call, put, takeEvery } from 'redux-saga/effects';
 import { engineConnected, engineConnectFailed } from '../engine/redux';
 
 const engineActions = {};
