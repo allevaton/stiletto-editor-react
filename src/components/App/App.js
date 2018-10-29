@@ -22,7 +22,7 @@ const App = ({ classes }) => (
 
     <EngineSpace />
 
-    {process.env.NODE_ENV !== 'production' && <ReduxDevTools />}
+    {/*{process.env.NODE_ENV !== 'production' && <ReduxDevTools />}*/}
   </div>
 );
 

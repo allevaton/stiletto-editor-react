@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid';
 
 const TestElements = () => {
   return (
-    <Grid container alignItems="flex-end" spacing="8">
+    <Grid container alignItems="flex-end" spacing={8}>
       <Grid item>
         <TextField label="Start typing something" />
       </Grid>
